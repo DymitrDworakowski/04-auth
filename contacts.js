@@ -11,13 +11,14 @@ function write(data) {
 }
 
 async function listContacts() {
-  const data = await fs.readFile(contactsPath, { encoding: 'utf-8' }); // Повертає масив контактів.
+  const data = await fs.readFile(contactsPath, { encoding: 'utf-8' }); // # Отримуємо і виводимо весь список контактів у вигляді таблиці (console.table)
   return JSON.parse(data);
 }
 
 async function getContactById(contactId) {
   const data = await listContacts();
-  return data.find(contact => contact.id === contactId);
+  return data.find(contact => contact.id === contactId) || null;
+
   // Повертає об'єкт контакту з таким id. Повертає null, якщо контакт з таким id не знайдений.
 }
 
@@ -26,22 +27,22 @@ async function removeContact(contactId) {
   const index = data.findIndex(contact => contact.id === contactId);
 
   if (index === -1) {
-    return undefined;
+    return null;
   }
   const newContact = [...data.slice(0, index), ...data.slice(index + 1)];
   await write(newContact);
 
-  return data[index];
+  return data[index] ;
 
   //  Повертає об'єкт видаленого контакту. Повертає null, якщо контакт з таким id не знайдений.
 }
 
-async function addContact(name, email, phone) {
-  const data = await listContacts();
-  const newContact = { name, email, phone, id: crypto.randomUUID() };
+async function addContact(data) {
+  const contacts = await listContacts();
+  const newContact = {id: crypto.randomUUID(),...data} ;
 
-  data.push(newContact);
-  await write(data);
+  contacts.push(newContact);
+  await write(contacts);
 
   return newContact;
 }

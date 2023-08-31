@@ -6,7 +6,8 @@ const program = new Command();
 async function invokeAction({ action, id, name, email, phone }) {
   switch (action) {
     case 'list':
-      return Contacts.listContacts();
+      const all = await Contacts.listContacts();
+      return console.table(all);
 
     case 'get':
       return Contacts.getContactById(id);
